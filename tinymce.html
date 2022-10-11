@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <script src="D:\Tasks\tinymce.js" referrerpolicy="origin"></script>
+
+
+    <script>
+
+tinymce.init({
+
+
+        selector: 'textarea',
+        forced_root_block : false,
+        force_br_newlines : true,
+        force_p_newlines : false,
+        encoding: 'xml',
+        entity_encoding : "raw",
+        protect: [
+        /\<\/?(if|else|td)\>/g,  // Protect <if> & </endif>
+        /\<\/?(|ul|li|#items|#list)\>/g,  // Protect <if> & </endif>
+        // /\<xsl\:[^>]+\>/g,  // Protect <xsl:...>
+        // /<\?php.*?\?>/g  // Protect php code
+            ],
+    
+      
+        valid_children: '##',
+        valid_elements: 'table,tr,th,td',
+        table_header_type: 'section',
+        plugins: 'help link table paste code emoticons',
+        fix_table_elements : true,
+        table_use_colgroups: false,
+        toolbar: 'help addTab',
+
+        cleanup : true,
+        verify_html : true,
+        // extended_valid_elements: "my-shadier-element[*]",
+        custom_elements: "~my-shadier-element",
+
+        style_formats_merge: true,
+        style_formats: [
+            {title: 'my-shadier-element',inline: 'my-shadier-element', block: 'h1',styles: { fontWeight: 'bold',fontSize: '32px'} },
+        ],
+        help_tabs: [
+            'shortcuts', // the default shortcuts tab
+            'keyboardnav', // the default keyboard navigation tab
+            'plugins', // the default plugins    tab
+            {
+            name: 'my-shadier-element', // new tab called custom1
+            title: 'my-shadier-element', //title of my custom element
+            items: [
+                {
+                type: 'htmlpanel',
+                html: '<h1>This is a custom element for h1</h1>',
+                }
+            ]
+            },
+            {
+            name: 'versions', // override the default versions tab
+            title: 'Custom Versions',
+            items: [
+                {
+                type: 'htmlpanel',
+                html: 'This is a custom versions panel.'
+                }
+            ]
+            },
+            'custom2', // new tab custom2 as defined on init in setup() below
+            'custom3' // new tab custom3 as defined on button click in setup() below
+        ],
+        setup: function(editor) {
+            // on editor init, add a tab called custom2
+            editor.on('init', function() {
+            editor.plugins.help.addTab({
+                name: 'custom2',
+                title: 'Custom Tab 2',
+                items: [
+                {
+                    type: 'htmlpanel',
+                    html: '<p>This is another custom tab</p>',
+                }
+                ]}
+            );
+            });
+
+            // add a toolbar button that when clicked adds a tab called custom3
+            editor.ui.registry.addButton('addTab', {
+            text: 'Add tab',
+            onAction: function() {
+                editor.plugins.help.addTab({
+                name: 'custom3',
+                title: 'Custom Tab 3',
+                items: [
+                    {
+                    type: 'htmlpanel',
+                    html: '<p>This is yet another custom tab</p>',
+                    }
+                ]
+                });
+            }
+            });
+        }
+        });
+
+
+        tinymce.activeEditor.plugins.help.addTab({
+        name: 'custom',
+        title: 'My Custom Tab',
+        items: [
+            {
+            type: 'htmlpanel',
+            html: '<p>This is a custom tab</p>',
+            }
+        ]
+        });
+
+        </script>
+
+</head>
+<body>
+     <h1>TinyMCE Quick Start Guide</h1>
+
+     <textarea id="editor"></textarea>
+
+</body>
+</html>
