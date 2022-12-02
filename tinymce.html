@@ -1,122 +1,186 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <script src="D:\Tasks\tinymce.js" referrerpolicy="origin"></script>
     <script>
 
-//Tinymce Initialization part
+tinymce.PluginManager.add("example", function (editor, url) {
+        /* Add a button that opens a window */
+        editor.ui.registry.addButton("example", {
+          text: "Custom-Table",
+          onAction: function () {
+            /* Opens Dialog */
+            tinymce.activeEditor.windowManager.open(dialogConfig1);
+          },
+        });
 
-tinymce.init({
+        //Object which contains the structure of Dialog Box
+        let dialogConfig1 = {
+          title: "Add Table",
+          body: {
+            type: "tabpanel",
+            tabs: [
+              {
+                name: "Header",
+                title: "Custom-Tables",
+                items: [
+                  {
+                    type: "input",
+                    name: "rows",
+                    id: "row",
+                    label: "Enter no. of Rows",
+                  },
+                  {
+                    type: "input", // component type
+                    name: "cols", // identifier
+                    id: "column", // unique ID
+                    label: "Enter no. of Columns", // text for component label
+                  },
+                ],
+              },
+            ],
+          },
 
-        selector: 'textarea',
-        height: 500,
-        forced_root_block : false,
-        force_br_newlines : true,
-        force_p_newlines : false,
-        entity_encoding: 'raw',
-        plugins: 'code',
+
+          //Buttons present in Dialog Box
+          buttons: [
+            {
+              type: "cancel",
+              name: "closeButton",
+              text: "Cancel",
+            },
+            {
+              type: "submit",
+              name: "submitButton",
+              text: "Save",
+              primary: true,
+            },
+          ],
+
+
+          //Method that will trigger when we click on Save
+          onSubmit: function (api) {
+            var data = api.getData();
+
+            var a, b, tableEle, rowEle, colEle;
+            var a = data.rows; //No of rows you want
+            b = data.cols; //No of column you want
+
+            //If condition that checks if the input fields are empty or not if empty it throws alert message
+            if (a == "" || b == "") {
+              alert("Please enter some numeric value");
+            }
+
+            //Else condition that contains the main code of generating tables
+            else {
+              tableEle = document.createElement("table");
+              for (var i = 0; i < a; i++) {
+                rowEle = document.createElement("tr");
+
+                for (var j = 0; j < b; j++) {
+                  colEle = document.createElement("td");
+                  rowEle.appendChild(colEle);
+                }
+                tableEle.appendChild(rowEle);
+              }
+              // console.log(tableEle);
+              editor.insertContent(tableEle.outerHTML);
+            }
+            api.close();
+          },
+        };
+      });
+
+      //Tinymce Initialization part
+
+      tinymce.init({
+        selector: "textarea#editor",
+        height: 600,
+        forced_root_block: false,
+        force_br_newlines: true,
+        force_p_newlines: false,
+        table_grid: false,
+        plugins: "example help code",
+        toolbar: "example | help",
+        menubar: 'file edit view insert format tools table tc help example',
+        table_grid: false,
+        content_style:
+          "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
         protect: [
-        /\<\/?(if|else|td)\>/g,  // Protect <if> & </endif>
-        /\<\/?(|ul|li|#items|#list  )\>/g,  // Protect <if> & </endif>
-        // /\<xsl\:[^>]+\>/g,  // Protect <xsl:...>
-        // /<\?php.*?\?>/g  // Protect php code
-            ],      
-        valid_elements: 'table,tr,th,td,my-shadier-element',
-        table_header_type: 'section',
-        fix_table_elements : true,
+          , // Protect <if> & </endif>
+          /\<\/?(|ul|li|#items|#list)\>/g, // Protect #list & #items
+          /^[>=,<=,!=,+,\-,*,,&gt;/,%,&lt;]{0,}/g, // Protects < , >
+        ],
+        valid_elements: "table,tr,th,td,my-shadier-element",
+        table_header_type: "section",
+        fix_table_elements: true,
         table_use_colgroups: false,
-        toolbar: 'help addTab',
-        cleanup : true,
-        verify_html : true,
-        extended_valid_elements: "h1,h2,h3,h4,h5,h6,my-shadier-element[*],img[class=myclass|!src|border:0|alt|title|width|height|style]",
-        invalid_elements: 'strong,b,em,i',
-        custom_elements: "my-shadier-element",
+        toolbar: "help addTab",
+        encoding: "xml",
+        verify_html: true,
+        extended_valid_elements:
+          "h1,h2,h3,h4,h5,h6,my-shadier-element[*],img[class=myclass|!src|border:0|alt|title|width|height|style]",
+        invalid_elements: "strong,b,em,i",
+        custom_elements: "~my-shadier-element",
         style_formats_merge: true,
         style_formats: [
-            {title: 'my-shadier-element', block: 'my-shadier-element',styles: { fontWeight: 'bold',fontSize: '32px'} },
+          {
+            title: "my-shadier-element",
+            block: "my-shadier-element",
+            styles: { fontWeight: "bold", fontSize: "32px" },
+          },
         ],
         help_tabs: [
-            'shortcuts', // the default shortcuts tab
-            'keyboardnav', // the default keyboard navigation tab
-            'plugins', // the default plugins    tab
-            {
-            name: 'my-shadier-element', // new tab called custom1
-            title: 'my-shadier-element', //title of my custom element
+          "shortcuts", // the default shortcuts tab
+          "keyboardnav", // the default keyboard navigation tab
+          "plugins", // the default plugins    tab
+          {
+            name: "my-shadier-element", // new tab called custom1
+            title: "my-shadier-element", //title of my custom element
             items: [
-                {
-                type: 'htmlpanel',
-                html: '<h1>This is a custom element for h1</h1>',
-                }
-            ]
-            },
-            {
-            name: 'versions', // override the default versions tab
-            title: 'Custom Versions',
+              {
+                type: "htmlpanel",
+                html: "<h1>This is a custom element for h1</h1>",
+              },
+            ],
+          },
+          {
+            name: "versions", // override the default versions tab
+            title: "Custom Versions",
             items: [
-                {
-                type: 'htmlpanel',
-                html: 'This is a custom versions panel.'
-                }
-            ]
-            },
-            'custom2', // new tab custom2 as defined on init in setup() below
-            'custom3' // new tab custom3 as defined on button click in setup() below
+              {
+                type: "htmlpanel",
+                html: "This is a custom versions panel.",
+              },
+            ],
+          },
+          "custom2", // new tab custom2 as defined on init in setup() below
+          "custom3", // new tab custom3 as defined on button click in setup() below
         ],
-        setup: function(editor) {
-            // on editor init, add a tab called custom2
-            editor.on('init', function() {
+        setup: function (editor) {
+          // on editor init, add a tab called custom2
+          editor.on("init", function () {
             editor.plugins.help.addTab({
-                name: 'custom2',
-                title: 'Custom Tab 2',
-                items: [
+              name: "custom2",
+              title: "Custom Tab 2",
+              items: [
                 {
-                    type: 'htmlpanel',
-                    html: '<p>This is another custom tab</p>',
-                }
-                ]}
-            );
+                  type: "htmlpanel",
+                  html: "<p>This is another custom tab</p>",
+                },
+              ],
             });
-
-            // add a toolbar button that when clicked adds a tab called custom3
-            editor.ui.registry.addButton('addTab', {
-            text: 'Add tab',
-            onAction: function() {
-                editor.plugins.help.addTab({
-                name: 'custom3',
-                title: 'Custom Tab 3',
-                items: [
-                    {
-                    type: 'htmlpanel',
-                    html: '<p>This is yet another custom tab</p>',
-                    }
-                ]
-                });
-            }
-            });
-        }
-        });
-
-        tinymce.activeEditor.plugins.help.addTab({
-        name: 'custom',
-        title: 'My Custom Tab',
-        items: [
-            {
-            type: 'htmlpanel',
-            html: '<p>This is a custom tab</p>',
-            }
-        ]
-        });
-        </script>
-
-</head>
-<body>
-     <h1>TinyMCE Quick Start Guide</h1>
-     <textarea id="editor"></textarea> 
-</body>
+          });
+        },
+      });
+    </script>
+  </head>
+  <body>
+    <h1>TinyMCE Quick Start Guide</h1>
+    <textarea id="editor"></textarea>
+  </body>
 </html>
-
-
